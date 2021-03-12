@@ -1,44 +1,63 @@
+from json import dumps, loads
 from random import choice
 
 from flask import Response, request
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource
 
-from database.models import Wish
+from database.models import Wish, User
 
 
 class WishListApi(Resource):
-    @staticmethod
-    def get():
-        wishlist = Wish.objects().to_json()
+    @jwt_required()
+    def get(self):
+        user_id = get_jwt_identity()
+        user = User.objects.get(id=user_id)
+        wishlist = dumps([loads(wish.to_json()) for wish in user.wishlist])
+        print(wishlist)
+
         return Response(wishlist, status=200, mimetype="application/json")
 
-    @staticmethod
-    def post():
+    @jwt_required()
+    def post(self):
+        user_id = get_jwt_identity()
         body = request.get_json()
-        wish = Wish(**body).save()
+        user = User.objects.get(id=user_id)
+        wish = Wish(**body, added_by=user)
+        wish.save()
+        user.update(push__wishlist=wish)
+        user.save()
+
         return {'id': str(wish.id)}, 200
 
 
 class WishApi(Resource):
-    @staticmethod
-    def get(wish_id):
-        wish = Wish.objects.get(id=wish_id).to_json()
+    @jwt_required()
+    def get(self, wish_id):
+        user_id = get_jwt_identity()
+        wish = Wish.objects.get(id=wish_id, added_by=user_id).to_json()
         return Response(wish, mimetype="application/json", status=200)
 
-    @staticmethod
-    def put(wish_id):
+    @jwt_required()
+    def put(self, wish_id):
+        user_id = get_jwt_identity()
+        wish = Wish.objects.get(id=wish_id, added_by=user_id)
         body = request.get_json()
-        Wish.objects.get(id=wish_id).update(**body)
+        wish.update(**body)
         return 'Wish updated', 200
 
-    @staticmethod
-    def delete(wish_id):
-        Wish.objects.get(id=wish_id).delete()
-        return 'Wish removed', 200
+    @jwt_required()
+    def delete(self, wish_id):
+        user_id = get_jwt_identity()
+        wish = Wish.objects.get(id=wish_id, added_by=user_id)
+        wish.delete()
+        return 'Wish deleted', 200
 
 
 class RandomWishApi(Resource):
-    @staticmethod
-    def get():
-        random_wish = choice(Wish.objects()).to_json()
+    @jwt_required()
+    def get(self):
+        user_id = get_jwt_identity()
+        user = User.objects.get(id=user_id)
+        random_wish = dumps(choice([loads(wish.to_json()) for wish in user.wishlist]))
         return Response(random_wish, mimetype="application/json", status=200)

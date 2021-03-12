@@ -1,4 +1,6 @@
 flask
 flask_restful
 flask_mongoengine
+flask_bcrypt
+flask_jwt_extended
 python_dotenv
