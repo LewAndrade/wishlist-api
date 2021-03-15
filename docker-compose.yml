@@ -1,0 +1,18 @@
+version: "3"
+services:
+
+  flask:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      MONGODB_SETTINGS: "mongodb://mongo-server:27017/qitech"
+      JWT_SECRET_KEY: "supersecretkey"
+    depends_on:
+      - mongo-server
+
+
+  mongo-server:
+    image: mongo
+    volumes:
+      - .data/mdata:/data/db
