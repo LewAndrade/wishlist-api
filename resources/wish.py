@@ -14,7 +14,6 @@ class WishListApi(Resource):
         user_id = get_jwt_identity()
         user = User.objects.get(id=user_id)
         wishlist = dumps([loads(wish.to_json()) for wish in user.wishlist])
-        print(wishlist)
 
         return Response(wishlist, status=200, mimetype="application/json")
 
