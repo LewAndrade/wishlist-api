@@ -12,7 +12,7 @@ This is a REST API to a Wishlist application made using Flask and MongoDB.
 
 # REST API
 
-The API is hosted at `http://localhost:5000/api/v1/`.
+The API is hosted at `http://localhost:5000/api/v1`.
 
 ## User SignUp
 
