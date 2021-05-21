@@ -6,7 +6,7 @@ services:
     ports:
       - "5000:5000"
     environment:
-      MONGODB_SETTINGS: "mongodb://mongo-server:27017/qitech"
+      MONGODB_SETTINGS: "mongodb://mongo-server:27017/wishlist"
       JWT_SECRET_KEY: "supersecretkey"
     depends_on:
       - mongo-server

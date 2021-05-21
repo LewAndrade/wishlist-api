@@ -1,8 +1,6 @@
-# qiTech API
+# Wishlist API
 
-This is a REST API to a Wishlist application made as an application test to qiTech.
-
-The application was made using Flask and MongoDB.
+This is a REST API to a Wishlist application made using Flask and MongoDB.
 
 ## Install
 
